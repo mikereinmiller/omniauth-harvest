@@ -8,13 +8,28 @@ module OmniAuth
         :authorize_url => '/oauth2/authorize',
         :token_url => '/oauth2/token'
       }
-      
+
       def authorize_params
         super.tap do |params|
           params[:response_type] = "code"
           params[:client_id] = client.id
           params[:redirect_uri] ||= callback_url
         end
+      end
+
+      uid { raw_info["user"]["id"] }
+
+      info do
+        {
+          :email => raw_info["user"]["email"],
+          :first_name => raw_info["user"]["first_name"],
+          :last_name => raw_info["user"]["last_name"],
+          :image => raw_info["user"]["avatar_url"]
+        }
+      end
+
+      def raw_info
+        @raw_info ||= access_token.get("/account/who_am_i.json").parsed
       end
 
       def request_phase
