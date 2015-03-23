@@ -28,6 +28,11 @@ module OmniAuth
         }
       end
 
+      extra do
+        hash = {}
+        hash[:raw_info] = raw_info
+      end
+
       def raw_info
         @raw_info ||= access_token.get("/account/who_am_i.json").parsed
       end
